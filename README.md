@@ -73,40 +73,33 @@ Git: For cloning and version control management.
 
 ---
 
-## 🚀 Future Roadmap: What’s Next?
-If I had another week to develop this project, I would prioritize the following improvements to move it from a "Technical Assignment" to a "Production-Ready Application":
+## 🚀 Future Roadmap: Kierunki Rozwoju
+Gdybym miał dodatkowy tydzień na rozwój projektu, priorytetem byłoby przekształcenie go z zadania technicznego w aplikację klasy produkcyjnej:
 
-Priority,Feature,Description
-High,TanStack Query,Replace useState hooks with robust caching and background refetching to minimize redundant API calls.
-High,Map Optimization,Implement Leaflet.markercluster and Server-Side Bounding Box filtering to handle high-density areas (Warsaw/Kraków).
-Medium,E2E Testing,"Deploy Playwright to simulate full user journeys, specifically verifying route geometry and ""Find Near Me"" flows."
-Medium,Component Testing,Expand Vitest coverage for the StatsPanel and FilterPanel to ensure UI state integrity.
-Low,PWA Support,"Integrate Service Workers for Offline Mode, allowing users to access cached maps and locker data on the go."
-
+| Priorytet | Funkcjonalność | Uzasadnienie |
+| :--- | :--- | :--- |
+| **Wysoki** | **TanStack Query** | Zastąpienie `useState` profesjonalnym cachowaniem i automatycznym odświeżaniem danych w tle. |
+| **Wysoki** | **Optymalizacja Mapy** | Implementacja `markercluster` oraz filtrowania po stronie serwera (Bounding Box), aby płynnie obsługiwać tysiące punktów w miastach takich jak Warszawa czy Kraków. |
+| **Średni** | **Testy E2E (Playwright)** | Symulacja pełnej ścieżki użytkownika: od wyszukiwania miasta, przez geolokalizację, aż po weryfikację geometrii trasy pieszej. |
+| **Średni** | **Rozbudowa Vitest** | Dodanie testów komponentów dla `StatsPanel` i `FilterPanel`, aby zapewnić spójność UI przy zmianach stanów filtrów. |
+| **Niski** | **Wsparcie PWA** | Dodanie Service Workera dla trybu offline, umożliwiającego dostęp do ostatnio wyszukiwanych paczkomatów bez połączenia z siecią. |
 ---
 
-## 🤖 Use of Ai Tools
+## 🤖 Wykorzystanie Narzędzi AI
+W procesie tworzenia projektu wykorzystałem narzędzia AI (Claude, Gemini) jako "mnożnik produktywności", co pozwoliło na przyspieszenie setupu oraz dopracowanie złożonej logiki biznesowej.
 
-I leveraged AI tools (Claude, Gemini) as a force multiplier to accelerate boilerplate setup and complex logic refinement while maintaining strict architectural oversight.
-Implementation Areas
+### **Obszary wsparcia:**
+* **Architektura i Boilerplate:** Szybka konfiguracja nowoczesnego stosu technologicznego (React 19, Vite 8, Tailwind 4) zgodnie z aktualnymi standardami.
+* **Logika Algorytmiczna:** Współpraca przy tworzeniu narzędzia `hoursParser`. AI pomogło zidentyfikować brzegowe przypadki formatów czasu w API (np. różnice między `24/7` a `PN-PT 11-20`), co pozwoliło na stworzenie niezawodnego Regexa.
+* **Orkiestracja API:** Optymalizacja asynchronicznej logiki pobierania danych z trzech różnych źródeł (InPost, OSRM, Nominatim).
+* **Refining UI:** Iteracyjne dopracowanie stylizacji Tailwind 4, w tym efektów *glassmorphism* oraz animacji markerów na mapie.
 
-    Architecture: Streamlined the configuration for the React 19 / Vite 8 / Tailwind 4 stack.
+### **Weryfikacja i kontrola jakości:**
+> Kod generowany przez AI nigdy nie był traktowany jako gotowe rozwiązanie. Każdy fragment przeszedł przez mój proces weryfikacji:
 
-    Algorithmic Logic: Co-developed the hoursParser utility. AI helped identify edge-case time formats (e.g., 24/7 vs PN-PT 11-20) to ensure 100% regex accuracy.
-
-    API Orchestration: Refined asynchronous flows for fetching and merging data from InPost, OSRM, and Nominatim.
-
-    UI/UX: Iterated on Tailwind 4 glassmorphism effects and custom pulsing CSS animations for map markers.
-
-The "Human in the Loop" Process
-
-    AI-generated code was never treated as "final." I applied a rigorous verification pipeline:
-
-    Manual Code Review: Every snippet was audited for type-safety and logical alignment with the project’s goals.
-
-    Performance Tuning: I manually refactored AI suggestions with useMemo and useCallback to eliminate rendering bottlenecks and maintain a 60fps experience.
-
-    Build Validation: Consistent use of tsc and npm run build ensured the codebase remained production-grade and error-free.
+1.  **Code Review:** Każda linia kodu została ręcznie sprawdzona pod kątem bezpieczeństwa typów (TypeScript) i poprawności logicznej.
+2.  **Optymalizacja Wydajności:** Samodzielnie zaimplementowałem hooki `useMemo` oraz `useCallback` w miejscach, gdzie sugestie AI nie uwzględniały potencjalnych wąskich gardeł renderowania.
+3.  **Walidacja Builda:** Regularne testy za pomocą `npm run build` oraz `tsc` zapewniły, że finalny produkt jest wolny od błędów i gotowy do wdrożenia.
 
 ---
 

@@ -7,6 +7,8 @@
 
   --animate-marker-pulse: marker-pulse 1.6s ease-out infinite;
   --animate-slide-in: slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-in-left: slide-in-left 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slide-up 0.30s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
   @keyframes marker-pulse {
     0% { transform: scale(0.8); opacity: 0.9; }
@@ -17,6 +19,16 @@
   @keyframes slide-in {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes slide-in-left {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 }
 
@@ -153,4 +165,20 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #52525b;
+}
+
+/* ============================================================
+   Mobile — prevent Leaflet controls from overlapping hamburger
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Push zoom controls below the hamburger button
+     (hamburger: top-4 = 16px + h-11 = 44px + gap 12px = ~72px) */
+  .leaflet-top.leaflet-left {
+    top: 76px !important;
+  }
+
+  /* Keep attribution readable on small screens */
+  .leaflet-control-attribution {
+    max-width: 60vw;
+  }
 }

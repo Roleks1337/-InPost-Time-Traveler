@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Map, SlidersHorizontal, BarChart3, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, Map, SlidersHorizontal, BarChart3, Search, X } from 'lucide-react';
 import { useState } from 'react';
 import { clsx } from 'clsx';
 import { CitySearch } from './CitySearch';
@@ -71,6 +71,8 @@ interface SidebarProps {
   // Stats
   stats: DashboardStats;
   filteredCount: number;
+  // Mobile
+  onClose?: () => void;
 }
 
 export function Sidebar({
@@ -92,11 +94,12 @@ export function Sidebar({
   onOnlyParcelLockersChange,
   stats,
   filteredCount,
+  onClose,
 }: SidebarProps) {
   return (
     <aside
       id="sidebar"
-      className="w-80 flex-shrink-0 h-full flex flex-col bg-zinc-950/95 border-r border-zinc-800/60 overflow-y-auto"
+      className="w-full sm:w-80 flex-shrink-0 h-full flex flex-col bg-zinc-950/95 border-r border-zinc-800/60 overflow-y-auto"
     >
       {/* Logo header */}
       <div className="px-5 py-4 border-b border-zinc-800/60 flex-shrink-0">
@@ -104,12 +107,22 @@ export function Sidebar({
           <div className="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
             <span className="text-zinc-900 font-black text-sm leading-none">IP</span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h1 className="text-sm font-bold text-zinc-100 leading-tight">
               InPost Time-Traveler
             </h1>
             <p className="text-[11px] text-zinc-500 leading-tight">& Accessibility Suite</p>
           </div>
+          {/* Close button – only rendered when onClose prop is provided (mobile overlay) */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              aria-label="Close sidebar"
+              className="ml-auto p-2 rounded-xl text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors flex-shrink-0"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
 
         {/* Filtered count badge */}

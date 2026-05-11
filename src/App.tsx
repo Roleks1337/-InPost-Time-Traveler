@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { MapView } from './components/MapView/MapView';
 import { PointCard } from './components/PointCard/PointCard';
@@ -8,7 +8,7 @@ import { computeStats } from './utils/statistics';
 import { reverseGeocode } from './api/nominatim';
 import { fetchRoute } from './api/routing';
 import type { Point } from './types/inpost';
-import { AlertCircle, MapPin } from 'lucide-react';
+import { AlertCircle, MapPin, Menu } from 'lucide-react';
 import { clsx } from 'clsx';
 
 /** Minimum zoom level before auto-loading points for the visible area */
@@ -16,6 +16,9 @@ const AUTO_LOAD_ZOOM_THRESHOLD = 11;
 
 /** Debounce delay (ms) for map moveend auto-load — respects Nominatim 1 req/s limit */
 const MOVE_DEBOUNCE_MS = 1200;
+
+/** Breakpoint at which sidebar renders inline (not as overlay) */
+const SIDEBAR_INLINE_BREAKPOINT = 768;
 
 export default function App() {
   // Data
@@ -34,7 +37,7 @@ export default function App() {
   const [autoLoadCity, setAutoLoadCity] = useState<string | null>(null);
   const [autoFit, setAutoFit] = useState(true);
   const moveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastGeocodedRef = useRef<string | null>(null); // avoid duplicate requests
+  const lastGeocodedRef = useRef<string | null>(null);
 
   // Routing and Geolocation state
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
@@ -42,6 +45,22 @@ export default function App() {
   const [routeDistance, setRouteDistance] = useState<number | null>(null);
   const [routeDuration, setRouteDuration] = useState<number | null>(null);
   const [isLocating, setIsLocating] = useState(false);
+
+  // ── Responsive sidebar state ─────────────────────────────────────────────────
+  // On mobile (<768px): sidebar is hidden by default and shown as a fixed overlay.
+  // On desktop (≥768px): sidebar is always visible inline; sidebarOpen has no effect.
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < SIDEBAR_INLINE_BREAKPOINT);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${SIDEBAR_INLINE_BREAKPOINT - 1}px)`);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (!e.matches) setSidebarOpen(false); // close overlay when resizing to desktop
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // Filtered points for map
   const filteredPoints = useMemo(() => {
@@ -65,8 +84,9 @@ export default function App() {
   const handleSelectPoint = useCallback(
     async (point: Point) => {
       setSelectedPoint(point);
+      // Close sidebar overlay on mobile when a point is selected
+      if (isMobile) setSidebarOpen(false);
 
-      // If user location is known, calculate route
       if (userLocation) {
         const result = await fetchRoute(
           userLocation.lat,
@@ -79,15 +99,17 @@ export default function App() {
         setRouteDuration(result.duration);
       }
     },
-    [userLocation],
+    [userLocation, isMobile],
   );
 
   const handleSearch = useCallback(
     (city: string) => {
-      setAutoFit(true); // manual search → fit bounds to results
+      setAutoFit(true);
       search(city);
+      // Close sidebar on mobile after searching so the map is visible
+      if (isMobile) setSidebarOpen(false);
     },
-    [search],
+    [search, isMobile],
   );
 
   const handleClear = useCallback(() => {
@@ -115,6 +137,7 @@ export default function App() {
         setAutoFit(true);
         await findNearest(latitude, longitude);
         setIsLocating(false);
+        if (isMobile) setSidebarOpen(false);
       },
       (err) => {
         alert('Error retrieving location: ' + err.message);
@@ -122,12 +145,8 @@ export default function App() {
       },
       { enableHighAccuracy: true },
     );
-  }, [findNearest]);
+  }, [findNearest, isMobile]);
 
-  /**
-   * Called by MapView on every `moveend` event.
-   * If zoom ≥ threshold: debounce → Nominatim → search city (if different from current).
-   */
   const handleMapMoveEnd = useCallback(
     (lat: number, lng: number, zoom: number) => {
       if (zoom < AUTO_LOAD_ZOOM_THRESHOLD) return;
@@ -140,19 +159,15 @@ export default function App() {
         try {
           const city = await reverseGeocode(lat, lng);
           if (!city) return;
-
-          // Avoid duplicate requests for the same geocoded city
           if (city === lastGeocodedRef.current) return;
           lastGeocodedRef.current = city;
-
-          // Don't re-fetch if we already have this city loaded
           if (city === searchedCity) return;
 
           setAutoLoadCity(city);
-          setAutoFit(false); // map-triggered search → don't auto-fit bounds
+          setAutoFit(false);
           search(city);
         } catch {
-          // Silently ignore geocoding failures (network issues, rate limits)
+          // Silently ignore geocoding failures
         }
       }, MOVE_DEBOUNCE_MS);
     },
@@ -163,32 +178,73 @@ export default function App() {
 
   const totalCountDisplay = totalCount > 0 ? totalCount : points.length;
 
+  // Shared sidebar props
+  const sidebarProps = {
+    isLoading,
+    searchedCity,
+    autoLoadCity,
+    onSearch: handleSearch,
+    onClear: handleClear,
+    onFindNearest: handleFindNearest,
+    selectedHour,
+    onHourChange: setSelectedHour,
+    showClosed,
+    onShowClosedChange: setShowClosed,
+    easyAccessOnly,
+    onEasyAccessChange: setEasyAccessOnly,
+    showDisabled,
+    onShowDisabledChange: setShowDisabled,
+    onlyParcelLockers,
+    onOnlyParcelLockersChange: setOnlyParcelLockers,
+    stats,
+    filteredCount: filteredPoints.length,
+  };
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
-      {/* Sidebar */}
-      <Sidebar
-        isLoading={isLoading}
-        searchedCity={searchedCity}
-        autoLoadCity={autoLoadCity}
-        onSearch={handleSearch}
-        onClear={handleClear}
-        onFindNearest={handleFindNearest}
-        selectedHour={selectedHour}
-        onHourChange={setSelectedHour}
-        showClosed={showClosed}
-        onShowClosedChange={setShowClosed}
-        easyAccessOnly={easyAccessOnly}
-        onEasyAccessChange={setEasyAccessOnly}
-        showDisabled={showDisabled}
-        onShowDisabledChange={setShowDisabled}
-        onlyParcelLockers={onlyParcelLockers}
-        onOnlyParcelLockersChange={setOnlyParcelLockers}
-        stats={stats}
-        filteredCount={filteredPoints.length}
-      />
 
-      {/* Main area */}
+      {/* ── Desktop sidebar (≥768px) — always rendered inline ── */}
+      {!isMobile && (
+        <Sidebar {...sidebarProps} />
+      )}
+
+      {/* ── Mobile sidebar overlay (<768px) ── */}
+      {isMobile && sidebarOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-[1900] bg-black/60 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+          {/* Sidebar panel sliding from left */}
+          <div className="fixed inset-y-0 left-0 z-[2000] w-[85vw] max-w-sm animate-slide-in-left">
+            <Sidebar {...sidebarProps} onClose={() => setSidebarOpen(false)} />
+          </div>
+        </>
+      )}
+
+      {/* ── Main area (map) ── */}
       <main className="flex-1 relative overflow-hidden">
+
+        {/* Hamburger button — mobile only, visible when sidebar is closed */}
+        {isMobile && !sidebarOpen && (
+          <button
+            id="hamburger-btn"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
+            className={clsx(
+              'fixed top-4 left-4 z-[1000]',
+              'w-11 h-11 rounded-2xl flex items-center justify-center',
+              'bg-zinc-900/90 backdrop-blur-sm border border-zinc-700/60',
+              'text-zinc-300 hover:text-yellow-400 hover:border-yellow-400/40',
+              'shadow-xl transition-all duration-200 active:scale-95',
+            )}
+          >
+            <Menu size={20} />
+          </button>
+        )}
+
         {/* Map */}
         {(points.length > 0 || isLoading || userLocation) && (
           <MapView
@@ -220,8 +276,9 @@ export default function App() {
                 Start by searching for a city
               </h2>
               <p className="text-zinc-500 text-sm leading-relaxed">
-                Enter a city name in the left panel or click a suggestion to see
-                InPost lockers in your area.
+                {isMobile
+                  ? 'Tap the menu button (top-left) to search for a city or use the suggestions below.'
+                  : 'Enter a city name in the left panel or click a suggestion to see InPost lockers in your area.'}
               </p>
               <p className="text-zinc-600 text-xs mt-3">
                 💡 You can also zoom the map into a specific area — lockers will load automatically.
@@ -294,29 +351,72 @@ export default function App() {
           </div>
         )}
 
-        {/* Point detail panel */}
+        {/* ── PointCard: desktop = right panel, mobile = bottom sheet ── */}
         {selectedPoint && (
-          <div
-            id="point-detail-panel"
-            className={clsx(
-              'absolute top-0 right-0 h-full w-80 z-[500]',
-              'bg-zinc-900/95 backdrop-blur-sm border-l border-zinc-800/60',
-              'shadow-2xl overflow-y-auto animate-slide-in',
-            )}
-          >
-            <PointCard
-              point={selectedPoint}
-              isOpenNow={isOpenAt(selectedPoint, selectedHour)}
-              onClose={() => setSelectedPoint(null)}
-              routeDistance={routeDistance}
-              routeDuration={routeDuration}
-            />
-          </div>
+          isMobile ? (
+            /* Mobile: bottom sheet */
+            <>
+              {/* Scrim behind the sheet */}
+              <div
+                className="fixed inset-0 z-[1400] bg-black/40"
+                onClick={() => setSelectedPoint(null)}
+                aria-hidden="true"
+              />
+              <div
+                id="point-detail-panel"
+                className={clsx(
+                  'fixed bottom-0 left-0 right-0 z-[1500]',
+                  'h-[65vh] rounded-t-3xl overflow-hidden',
+                  'bg-zinc-900/98 backdrop-blur-sm border-t border-zinc-800/60',
+                  'shadow-2xl animate-slide-up',
+                )}
+              >
+                {/* Drag handle */}
+                <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+                  <div className="w-10 h-1 rounded-full bg-zinc-700" />
+                </div>
+                <div className="h-full overflow-y-auto">
+                  <PointCard
+                    point={selectedPoint}
+                    isOpenNow={isOpenAt(selectedPoint, selectedHour)}
+                    onClose={() => setSelectedPoint(null)}
+                    routeDistance={routeDistance}
+                    routeDuration={routeDuration}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Desktop: right slide-in panel */
+            <div
+              id="point-detail-panel"
+              className={clsx(
+                'absolute top-0 right-0 h-full w-80 z-[500]',
+                'bg-zinc-900/95 backdrop-blur-sm border-l border-zinc-800/60',
+                'shadow-2xl overflow-y-auto animate-slide-in',
+              )}
+            >
+              <PointCard
+                point={selectedPoint}
+                isOpenNow={isOpenAt(selectedPoint, selectedHour)}
+                onClose={() => setSelectedPoint(null)}
+                routeDistance={routeDistance}
+                routeDuration={routeDuration}
+              />
+            </div>
+          )
         )}
 
         {/* Results count chip */}
         {filteredPoints.length > 0 && !isLoading && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[400]">
+          <div
+            className={clsx(
+              'absolute left-1/2 -translate-x-1/2 z-[400]',
+              // Push chip up when bottom sheet is open on mobile
+              isMobile && selectedPoint ? 'bottom-[67vh]' : 'bottom-4',
+              'transition-all duration-300',
+            )}
+          >
             <div className="bg-zinc-900/90 backdrop-blur-sm border border-zinc-700/60 rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
               <span className="text-xs text-zinc-300 font-medium">

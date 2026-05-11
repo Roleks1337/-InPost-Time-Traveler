@@ -73,33 +73,34 @@ Git: For cloning and version control management.
 
 ---
 
-## 🚀 Future Roadmap: Kierunki Rozwoju
-Gdybym miał dodatkowy tydzień na rozwój projektu, priorytetem byłoby przekształcenie go z zadania technicznego w aplikację klasy produkcyjnej:
+## 🚀 Future Roadmap: What's Next?
+If granted another week for development, I would prioritize the following improvements to transition this project from a "Technical Assignment" to a "Production-Ready Application":
 
-| Priorytet | Funkcjonalność | Uzasadnienie |
+| Priority | Feature | Description |
 | :--- | :--- | :--- |
-| **Wysoki** | **TanStack Query** | Zastąpienie `useState` profesjonalnym cachowaniem i automatycznym odświeżaniem danych w tle. |
-| **Wysoki** | **Optymalizacja Mapy** | Implementacja `markercluster` oraz filtrowania po stronie serwera (Bounding Box), aby płynnie obsługiwać tysiące punktów w miastach takich jak Warszawa czy Kraków. |
-| **Średni** | **Testy E2E (Playwright)** | Symulacja pełnej ścieżki użytkownika: od wyszukiwania miasta, przez geolokalizację, aż po weryfikację geometrii trasy pieszej. |
-| **Średni** | **Rozbudowa Vitest** | Dodanie testów komponentów dla `StatsPanel` i `FilterPanel`, aby zapewnić spójność UI przy zmianach stanów filtrów. |
-| **Niski** | **Wsparcie PWA** | Dodanie Service Workera dla trybu offline, umożliwiającego dostęp do ostatnio wyszukiwanych paczkomatów bez połączenia z siecią. |
+| **High** | **TanStack Query** | Transition from `useState` to robust caching, automatic background refetching, and optimized error handling to minimize redundant API calls. |
+| **High** | **Advanced Map Optimization** | Implement `Leaflet.markercluster` and **Server-Side Bounding Box filtering** to ensure smooth performance in high-density areas like Warsaw or Kraków. |
+| **Medium** | **E2E Testing (Playwright)** | Add end-to-end tests to simulate the full user journey: from searching a city to verifying real-world route geometry and walking times. |
+| **Medium** | **Component Testing** | Expand **Vitest** coverage for the `StatsPanel` and `FilterPanel` to ensure UI state changes accurately reflect filtered data. |
+| **Low** | **PWA Support** | Integrate Service Workers to enable **Offline Mode**, allowing users to access cached maps and locker data on the go with unstable connections. |
+
 ---
 
-## 🤖 Wykorzystanie Narzędzi AI
-W procesie tworzenia projektu wykorzystałem narzędzia AI (Claude, Gemini) jako "mnożnik produktywności", co pozwoliło na przyspieszenie setupu oraz dopracowanie złożonej logiki biznesowej.
+## 🤖 Usage of AI Tools
+I utilized AI tools (Claude, Gemini) as a **productivity multiplier** to accelerate boilerplate setup and refine complex business logic while maintaining strict architectural oversight.
 
-### **Obszary wsparcia:**
-* **Architektura i Boilerplate:** Szybka konfiguracja nowoczesnego stosu technologicznego (React 19, Vite 8, Tailwind 4) zgodnie z aktualnymi standardami.
-* **Logika Algorytmiczna:** Współpraca przy tworzeniu narzędzia `hoursParser`. AI pomogło zidentyfikować brzegowe przypadki formatów czasu w API (np. różnice między `24/7` a `PN-PT 11-20`), co pozwoliło na stworzenie niezawodnego Regexa.
-* **Orkiestracja API:** Optymalizacja asynchronicznej logiki pobierania danych z trzech różnych źródeł (InPost, OSRM, Nominatim).
-* **Refining UI:** Iteracyjne dopracowanie stylizacji Tailwind 4, w tym efektów *glassmorphism* oraz animacji markerów na mapie.
+### **Core Integration Areas:**
+* **Architecture & Boilerplate:** Streamlined the configuration of the modern **React 19 / Vite 8 / Tailwind 4** stack according to current industry best practices.
+* **Complex Algorithmic Logic:** Co-developed the `hoursParser` utility. AI helped identify edge cases in the InPost API's time formats (e.g., `24/7` vs `PN-PT 11-20`), ensuring a bulletproof RegEx implementation.
+* **API Orchestration:** Optimized asynchronous logic for fetching and merging data from multiple sources (InPost, OSRM, and Nominatim) with robust error handling.
+* **UI/UX Refinement:** Iteratively improved **Tailwind 4** styling, focusing on glassmorphism effects and custom pulsing CSS animations for map markers.
 
-### **Weryfikacja i kontrola jakości:**
-> Kod generowany przez AI nigdy nie był traktowany jako gotowe rozwiązanie. Każdy fragment przeszedł przez mój proces weryfikacji:
+### **Verification & Quality Control:**
+> AI-generated suggestions were never accepted blindly. I applied a rigorous "Human-in-the-loop" verification pipeline:
 
-1.  **Code Review:** Każda linia kodu została ręcznie sprawdzona pod kątem bezpieczeństwa typów (TypeScript) i poprawności logicznej.
-2.  **Optymalizacja Wydajności:** Samodzielnie zaimplementowałem hooki `useMemo` oraz `useCallback` w miejscach, gdzie sugestie AI nie uwzględniały potencjalnych wąskich gardeł renderowania.
-3.  **Walidacja Builda:** Regularne testy za pomocą `npm run build` oraz `tsc` zapewniły, że finalny produkt jest wolny od błędów i gotowy do wdrożenia.
+1.  **Manual Code Review:** Every line was audited for **Type-safety (TypeScript)** and logical correctness to ensure it met project requirements.
+2.  **Performance Tuning:** I manually refactored components using `useMemo` and `useCallback` where AI suggestions overlooked potential rendering bottlenecks.
+3.  **Build Validation:** Consistent use of `npm run build` and `tsc` verified that the final codebase is production-grade and error-free.
 
 ---
 

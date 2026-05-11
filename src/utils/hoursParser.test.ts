@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { parseOpeningHours, isOpenAt, formatOpeningHours } from './hoursParser';
 import type { Point } from '../types/inpost';
 
-// ---- Minimal Point factory for testing ----
 function makePoint(overrides: Partial<Pick<Point, 'opening_hours' | 'location_247'>>): Point {
   return {
     href: '',
@@ -57,9 +56,6 @@ function makePoint(overrides: Partial<Pick<Point, 'opening_hours' | 'location_24
   };
 }
 
-// ==================================================================
-// parseOpeningHours
-// ==================================================================
 describe('parseOpeningHours', () => {
   it('returns "24/7" for literal "24/7" string', () => {
     expect(parseOpeningHours('24/7')).toBe('24/7');
@@ -85,9 +81,6 @@ describe('parseOpeningHours', () => {
   });
 });
 
-// ==================================================================
-// isOpenAt
-// ==================================================================
 describe('isOpenAt', () => {
   it('returns true for a location_247 point at any hour', () => {
     const point = makePoint({ location_247: true, opening_hours: '08:00-20:00' });
@@ -132,16 +125,12 @@ describe('isOpenAt', () => {
   });
 });
 
-// ==================================================================
-// formatOpeningHours
-// ==================================================================
 describe('formatOpeningHours', () => {
   it('returns "Open 24/7" for 24/7', () => {
     expect(formatOpeningHours('24/7')).toBe('Open 24/7');
   });
 
   it('formats a parsed range correctly', () => {
-    // We now return the raw string to avoid losing weekend data.
     expect(formatOpeningHours('08:00-22:00')).toBe('08:00-22:00');
   });
 

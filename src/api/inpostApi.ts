@@ -2,10 +2,6 @@ import type { ApiResponse, FetchPointsParams } from '../types/inpost';
 
 const BASE_URL = 'https://api-global-points.easypack24.net/v1/points';
 
-/**
- * Fetches a single page of InPost points with optional filtering.
- * Throws on non-OK HTTP responses.
- */
 export async function fetchPoints(params: FetchPointsParams = {}): Promise<ApiResponse> {
   const { city, country = 'PL', page = 1, perPage = 100, relativePoint } = params;
 
@@ -34,10 +30,6 @@ export async function fetchPoints(params: FetchPointsParams = {}): Promise<ApiRe
   return data;
 }
 
-/**
- * Fetches multiple pages of points for a given city and accumulates results.
- * Useful for loading all points for a small city (usually < 5 pages).
- */
 export async function fetchAllPointsForCity(
   city: string,
   country = 'PL',

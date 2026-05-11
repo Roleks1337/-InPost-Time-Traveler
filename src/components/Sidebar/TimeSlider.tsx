@@ -9,10 +9,8 @@ interface TimeSliderProps {
 export function TimeSlider({ hour, onChange }: TimeSliderProps) {
   const label = `${String(hour).padStart(2, '0')}:00`;
 
-  // Color the track fill based on hour
   const fillPercent = (hour / 23) * 100;
 
-  // Decide if it's nighttime for accent color
   const isNight = hour < 7 || hour >= 22;
   const isDusk = (hour >= 19 && hour < 22) || (hour >= 7 && hour < 9);
 
@@ -43,7 +41,6 @@ export function TimeSlider({ hour, onChange }: TimeSliderProps) {
         </div>
       </div>
 
-      {/* Slider */}
       <div className="relative">
         <input
           id="time-slider"
@@ -61,7 +58,6 @@ export function TimeSlider({ hour, onChange }: TimeSliderProps) {
           }
           aria-label={`Selected hour: ${label}`}
         />
-        {/* Hour tick marks */}
         <div className="flex justify-between mt-1.5 px-0.5">
           {[0, 6, 12, 18, 23].map((h) => (
             <span key={h} className="text-[10px] text-zinc-600 font-mono">

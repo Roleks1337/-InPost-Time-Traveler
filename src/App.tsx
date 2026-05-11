@@ -11,21 +11,14 @@ import type { Point } from './types/inpost';
 import { AlertCircle, MapPin, Menu } from 'lucide-react';
 import { clsx } from 'clsx';
 
-/** Minimum zoom level before auto-loading points for the visible area */
 const AUTO_LOAD_ZOOM_THRESHOLD = 11;
-
-/** Debounce delay (ms) for map moveend auto-load — respects Nominatim 1 req/s limit */
 const MOVE_DEBOUNCE_MS = 1200;
-
-/** Breakpoint at which sidebar renders inline (not as overlay) */
 const SIDEBAR_INLINE_BREAKPOINT = 768;
 
 export default function App() {
-  // Data
   const { points, isLoading, error, totalCount, searchedCity, search, findNearest, clear } =
     useInPostPoints();
 
-  // UI state
   const [selectedHour, setSelectedHour] = useState<number>(new Date().getHours());
   const [showClosed, setShowClosed] = useState(false);
   const [easyAccessOnly, setEasyAccessOnly] = useState(false);
@@ -33,22 +26,17 @@ export default function App() {
   const [onlyParcelLockers, setOnlyParcelLockers] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
-  // Auto-load state
   const [autoLoadCity, setAutoLoadCity] = useState<string | null>(null);
   const [autoFit, setAutoFit] = useState(true);
   const moveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastGeocodedRef = useRef<string | null>(null);
 
-  // Routing and Geolocation state
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [routeDistance, setRouteDistance] = useState<number | null>(null);
   const [routeDuration, setRouteDuration] = useState<number | null>(null);
   const [isLocating, setIsLocating] = useState(false);
 
-  // ── Responsive sidebar state ─────────────────────────────────────────────────
-  // On mobile (<768px): sidebar is hidden by default and shown as a fixed overlay.
-  // On desktop (≥768px): sidebar is always visible inline; sidebarOpen has no effect.
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < SIDEBAR_INLINE_BREAKPOINT);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -56,13 +44,12 @@ export default function App() {
     const mq = window.matchMedia(`(max-width: ${SIDEBAR_INLINE_BREAKPOINT - 1}px)`);
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);
-      if (!e.matches) setSidebarOpen(false); // close overlay when resizing to desktop
+      if (!e.matches) setSidebarOpen(false);
     };
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // Filtered points for map
   const filteredPoints = useMemo(() => {
     return points.filter((p) => {
       if (!showDisabled && p.status !== 'Operating') return false;
@@ -73,18 +60,14 @@ export default function App() {
     });
   }, [points, showDisabled, easyAccessOnly, onlyParcelLockers, showClosed, selectedHour]);
 
-  // Stats from all loaded points
   const stats = useMemo(
     () => computeStats(points, (p) => isOpenAt(p, selectedHour)),
     [points, selectedHour],
   );
 
-  // ─── Handlers ───────────────────────────────────────────────────────────────
-
   const handleSelectPoint = useCallback(
     async (point: Point) => {
       setSelectedPoint(point);
-      // Close sidebar overlay on mobile when a point is selected
       if (isMobile) setSidebarOpen(false);
 
       if (userLocation) {
@@ -106,7 +89,6 @@ export default function App() {
     (city: string) => {
       setAutoFit(true);
       search(city);
-      // Close sidebar on mobile after searching so the map is visible
       if (isMobile) setSidebarOpen(false);
     },
     [search, isMobile],
@@ -151,9 +133,7 @@ export default function App() {
     (lat: number, lng: number, zoom: number) => {
       if (zoom < AUTO_LOAD_ZOOM_THRESHOLD) return;
 
-      if (moveDebounceRef.current) {
-        clearTimeout(moveDebounceRef.current);
-      }
+      if (moveDebounceRef.current) clearTimeout(moveDebounceRef.current);
 
       moveDebounceRef.current = setTimeout(async () => {
         try {
@@ -166,19 +146,14 @@ export default function App() {
           setAutoLoadCity(city);
           setAutoFit(false);
           search(city);
-        } catch {
-          // Silently ignore geocoding failures
-        }
+        } catch {}
       }, MOVE_DEBOUNCE_MS);
     },
     [search, searchedCity],
   );
 
-  // ────────────────────────────────────────────────────────────────────────────
-
   const totalCountDisplay = totalCount > 0 ? totalCount : points.length;
 
-  // Shared sidebar props
   const sidebarProps = {
     isLoading,
     searchedCity,
@@ -203,31 +178,23 @@ export default function App() {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
 
-      {/* ── Desktop sidebar (≥768px) — always rendered inline ── */}
-      {!isMobile && (
-        <Sidebar {...sidebarProps} />
-      )}
+      {!isMobile && <Sidebar {...sidebarProps} />}
 
-      {/* ── Mobile sidebar overlay (<768px) ── */}
       {isMobile && sidebarOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-[1900] bg-black/60 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
-          {/* Sidebar panel sliding from left */}
           <div className="fixed inset-y-0 left-0 z-[2000] w-[85vw] max-w-sm animate-slide-in-left">
             <Sidebar {...sidebarProps} onClose={() => setSidebarOpen(false)} />
           </div>
         </>
       )}
 
-      {/* ── Main area (map) ── */}
       <main className="flex-1 relative overflow-hidden">
 
-        {/* Hamburger button — mobile only, visible when sidebar is closed */}
         {isMobile && !sidebarOpen && (
           <button
             id="hamburger-btn"
@@ -245,7 +212,6 @@ export default function App() {
           </button>
         )}
 
-        {/* Map */}
         {(points.length > 0 || isLoading || userLocation) && (
           <MapView
             points={filteredPoints}
@@ -261,7 +227,6 @@ export default function App() {
           />
         )}
 
-        {/* Empty state */}
         {points.length === 0 && !isLoading && !error && !userLocation && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-zinc-950">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -310,7 +275,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Full-screen loading (first search or locating) */}
         {(isLoading || isLocating) && points.length === 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950 gap-4 z-[2000]">
             <div className="w-16 h-16 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center">
@@ -331,7 +295,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Overlay spinner when map already visible */}
         {isLoading && points.length > 0 && (
           <div className="absolute top-4 right-4 flex items-center gap-2 bg-zinc-900/90 backdrop-blur-sm border border-zinc-700/60 rounded-xl px-3 py-2 shadow-lg z-[1000]">
             <div className="w-4 h-4 rounded-full border-2 border-yellow-400 border-t-transparent animate-spin" />
@@ -343,7 +306,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Error toast */}
         {error && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 bg-red-900/90 backdrop-blur-sm border border-red-700/60 rounded-xl px-4 py-3 shadow-xl max-w-sm">
             <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
@@ -351,12 +313,9 @@ export default function App() {
           </div>
         )}
 
-        {/* ── PointCard: desktop = right panel, mobile = bottom sheet ── */}
         {selectedPoint && (
           isMobile ? (
-            /* Mobile: bottom sheet */
             <>
-              {/* Scrim behind the sheet */}
               <div
                 className="fixed inset-0 z-[1400] bg-black/40"
                 onClick={() => setSelectedPoint(null)}
@@ -371,7 +330,6 @@ export default function App() {
                   'shadow-2xl animate-slide-up',
                 )}
               >
-                {/* Drag handle */}
                 <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
                   <div className="w-10 h-1 rounded-full bg-zinc-700" />
                 </div>
@@ -387,7 +345,6 @@ export default function App() {
               </div>
             </>
           ) : (
-            /* Desktop: right slide-in panel */
             <div
               id="point-detail-panel"
               className={clsx(
@@ -407,12 +364,10 @@ export default function App() {
           )
         )}
 
-        {/* Results count chip */}
         {filteredPoints.length > 0 && !isLoading && (
           <div
             className={clsx(
               'absolute left-1/2 -translate-x-1/2 z-[400]',
-              // Push chip up when bottom sheet is open on mobile
               isMobile && selectedPoint ? 'bottom-[67vh]' : 'bottom-4',
               'transition-all duration-300',
             )}

@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import type { Point } from '../../types/inpost';
 import { isOpenAt } from '../../utils/hoursParser';
 
-// Fix default icon paths broken by bundlers
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -13,7 +12,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-/** Creates a small colored SVG circle marker */
 function createMarkerIcon(color: string, opacity: number): L.DivIcon {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
@@ -30,7 +28,6 @@ function createMarkerIcon(color: string, opacity: number): L.DivIcon {
   });
 }
 
-/** Creates a distinct purple pin for the user's location */
 function createUserLocationIcon(): L.DivIcon {
   const html = `
     <div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
@@ -50,7 +47,6 @@ function createUserLocationIcon(): L.DivIcon {
   });
 }
 
-/** Creates the selected-state marker — larger with a pulsing ring */
 function createSelectedMarkerIcon(color: string): L.DivIcon {
   const html = `
     <div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">
@@ -84,7 +80,6 @@ const SELECTED_ICONS = {
   disabled: createSelectedMarkerIcon('#ef4444'),
 };
 
-/** Auto-fit to bounds when a new set of points loads or user location is available */
 function FitBounds({ points, enabled, userLocation }: { points: Point[]; enabled: boolean, userLocation?: { lat: number; lon: number } | null }) {
   const map = useMap();
   const prevLength = useRef(0);
@@ -114,7 +109,6 @@ function FitBounds({ points, enabled, userLocation }: { points: Point[]; enabled
   return null;
 }
 
-/** Fires when the map stops moving; used for auto-load by zoom */
 function MapEventHandler({
   onMoveEnd,
 }: {
@@ -157,7 +151,6 @@ export function MapView({
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const polandCenter: [number, number] = [52.069, 19.48];
 
-  // If we only have userLocation, center map on it
   const center = points.length === 0 && userLocation 
     ? [userLocation.lat, userLocation.lon] as [number, number] 
     : polandCenter;
@@ -249,7 +242,6 @@ function MarkerLayer({
       const isDisabled = point.status !== 'Operating';
       const isSelected = selectedPoint?.name === point.name;
 
-      // Determine base category
       type IconKey = 'disabled' | 'closedAtTime' | 'openEasyAccess' | 'open';
       let category: IconKey;
       if (isDisabled) {

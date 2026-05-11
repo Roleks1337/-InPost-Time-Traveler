@@ -12,11 +12,6 @@ export interface DashboardStats {
   byProvince: Record<string, number>;
 }
 
-/**
- * Computes summary statistics from a list of points.
- * @param points - list of InPost points
- * @param openAtTimeFn - predicate to check if a point is open at the selected time
- */
 export function computeStats(
   points: Point[],
   openAtTimeFn: (p: Point) => boolean,
@@ -51,9 +46,6 @@ export function computeStats(
   return stats;
 }
 
-/**
- * Returns top N provinces by point count, sorted descending.
- */
 export function topProvinces(
   byProvince: Record<string, number>,
   n = 5,

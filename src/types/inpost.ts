@@ -1,7 +1,3 @@
-// ============================================================
-// InPost API Type Definitions — strict, no `any`
-// ============================================================
-
 export type LockerStatus = 'AVAILABLE' | 'UNAVAILABLE' | 'NO_DATA';
 
 export type PointStatus = 'Operating' | 'Disabled' | 'Temporarily Closed';

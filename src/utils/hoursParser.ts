@@ -27,7 +27,6 @@ export function parseOpeningHours(raw: string): ParsedHours {
     return '24/7';
   }
 
-  // Match HH:MM-HH:MM or HH-HH pattern (possibly after day prefix)
   const timePattern = /(\d{1,2})(?::(\d{2}))?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?/;
   const match = trimmed.match(timePattern);
 
@@ -53,7 +52,6 @@ export function parseOpeningHours(raw: string): ParsedHours {
  *  - 'unknown'            → assume open (graceful fallback)
  */
 export function isOpenAt(point: Point, hour: number): boolean {
-  // 24/7 outdoor points are always open
   if (point.location_247) {
     return true;
   }
@@ -65,20 +63,17 @@ export function isOpenAt(point: Point, hour: number): boolean {
   }
 
   if (parsed === 'unknown') {
-    // Unknown hours — show as open to avoid hiding points incorrectly
     return true;
   }
 
   const { openHour, closeHour, closeMinute } = parsed;
 
-  // Handle overnight windows (e.g. 22:00–06:00) — rare for InPost but defensive
   if (closeHour < openHour) {
     return hour >= openHour || hour < closeHour || (hour === closeHour && closeMinute > 0);
   }
 
   if (hour < openHour) return false;
   if (hour > closeHour) return false;
-  // Exactly at closing hour with minutes = treat as closed
   if (hour === closeHour && closeMinute === 0) return false;
 
   return true;
@@ -91,7 +86,5 @@ export function formatOpeningHours(raw: string): string {
   if (!raw) return 'No data';
   if (raw.trim() === '24/7' || raw.trim().toLowerCase() === '24h') return 'Open 24/7';
 
-  // For display purposes, it's safer to return the raw string so we don't lose
-  // weekend hours if the string is like "PN-PT 11-20 SB-ND 12-19".
   return raw;
 }

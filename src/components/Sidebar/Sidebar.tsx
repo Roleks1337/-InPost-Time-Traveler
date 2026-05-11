@@ -49,29 +49,24 @@ function Section({ title, icon, children, defaultOpen = true, id }: SectionProps
 }
 
 interface SidebarProps {
-  // Search
   isLoading: boolean;
   searchedCity: string | null;
   autoLoadCity: string | null;
   onSearch: (city: string) => void;
   onClear: () => void;
   onFindNearest: () => void;
-  // Time
   selectedHour: number;
   onHourChange: (h: number) => void;
   showClosed: boolean;
   onShowClosedChange: (v: boolean) => void;
-  // Filters
   easyAccessOnly: boolean;
   onEasyAccessChange: (v: boolean) => void;
   showDisabled: boolean;
   onShowDisabledChange: (v: boolean) => void;
   onlyParcelLockers: boolean;
   onOnlyParcelLockersChange: (v: boolean) => void;
-  // Stats
   stats: DashboardStats;
   filteredCount: number;
-  // Mobile
   onClose?: () => void;
 }
 
@@ -113,7 +108,6 @@ export function Sidebar({
             </h1>
             <p className="text-[11px] text-zinc-500 leading-tight">& Accessibility Suite</p>
           </div>
-          {/* Close button – only rendered when onClose prop is provided (mobile overlay) */}
           {onClose && (
             <button
               onClick={onClose}

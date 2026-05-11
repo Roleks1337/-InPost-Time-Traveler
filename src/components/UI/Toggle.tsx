@@ -34,7 +34,6 @@ export function Toggle({ id, checked, onChange, label, description, icon }: Togg
           <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{description}</p>
         )}
       </div>
-      {/* Toggle switch */}
       <div className="relative flex-shrink-0">
         <input
           id={id}

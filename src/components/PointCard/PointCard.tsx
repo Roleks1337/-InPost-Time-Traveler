@@ -39,7 +39,6 @@ export function PointCard({ point, isOpenNow, onClose, routeDistance }: PointCar
   const statusVariant = point.status === 'Operating' ? 'green' : 'red';
   const displayDistance = routeDistance !== undefined && routeDistance !== null ? routeDistance : point.distance;
 
-  // Strictly use 100m = 1m 10s (70s) logic as requested by user
   const walkingTimeMin = displayDistance 
     ? Math.max(1, Math.round((displayDistance / 100) * (70 / 60))) 
     : null;

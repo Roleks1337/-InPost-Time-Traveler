@@ -13,13 +13,6 @@ export interface UseInPostPointsResult {
   clear: () => void;
 }
 
-/**
- * Custom hook that manages InPost point data.
- *
- * - Fetches all pages for a given city in parallel (up to 10 pages)
- * - Tracks loading/error state
- * - Exposes `search(city)` and `clear()` actions
- */
 export function useInPostPoints(): UseInPostPointsResult {
   const [points, setPoints] = useState<Point[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +20,6 @@ export function useInPostPoints(): UseInPostPointsResult {
   const [totalCount, setTotalCount] = useState(0);
   const [searchedCity, setSearchedCity] = useState<string | null>(null);
 
-  // Track the latest search request to ignore stale responses
   const searchIdRef = useRef(0);
 
   const search = useCallback(async (city: string) => {
@@ -41,7 +33,6 @@ export function useInPostPoints(): UseInPostPointsResult {
     try {
       const data = await fetchAllPointsForCity(city, 'PL', 10);
 
-      // Ignore if a newer search was started
       if (searchIdRef.current !== currentId) return;
 
       setPoints(data.items);
@@ -69,7 +60,6 @@ export function useInPostPoints(): UseInPostPointsResult {
     setTotalCount(0);
 
     try {
-      // Fetch 25 nearest points
       const data = await fetchPoints({ relativePoint: `${lat},${lon}`, perPage: 25 });
 
       if (searchIdRef.current !== currentId) return;

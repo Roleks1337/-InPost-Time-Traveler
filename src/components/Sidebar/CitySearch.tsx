@@ -12,7 +12,6 @@ interface CitySearchProps {
   onFindNearest: () => void;
 }
 
-// Comprehensive list of Polish cities for autocomplete
 const POLISH_CITIES: string[] = [
   'Warszawa', 'Kraków', 'Wrocław', 'Poznań', 'Gdańsk', 'Szczecin', 'Bydgoszcz',
   'Lublin', 'Białystok', 'Katowice', 'Gdynia', 'Częstochowa', 'Radom', 'Sosnowiec',

@@ -167,17 +167,12 @@
   background: #52525b;
 }
 
-/* ============================================================
-   Mobile — prevent Leaflet controls from overlapping hamburger
-   ============================================================ */
+/* Mobile — push Leaflet zoom controls below the hamburger button */
 @media (max-width: 767px) {
-  /* Push zoom controls below the hamburger button
-     (hamburger: top-4 = 16px + h-11 = 44px + gap 12px = ~72px) */
   .leaflet-top.leaflet-left {
     top: 76px !important;
   }
 
-  /* Keep attribution readable on small screens */
   .leaflet-control-attribution {
     max-width: 60vw;
   }

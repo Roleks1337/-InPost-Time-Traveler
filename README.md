@@ -39,7 +39,7 @@ By analyzing data from the **InPost Global Points API** in real-time, the applic
 
 ---
 
-⚙️ Prerequisites & System Requirements
+## ⚙️ Prerequisites & System Requirements
 To build and run this solution locally, you will need the following:
 
 Node.js (v18.20.0 or higher): The project utilizes the latest Vite 8 build system, which requires a modern Node.js environment (LTS version recommended).
@@ -50,53 +50,64 @@ Git: For cloning and version control management.
 
 ## 🔧 Installation & Setup
 
-1. **Clone the repository:**
+1. **Change the directory:**
+   ```bash
+   cd .\Desktop\
+   ```
+2. **Clone the repository:**
    ```bash
    git clone [URL]
    ```
-2. **Install dependencies:**
+3. **Install dependencies:**
    ```bash
    npm install
    ```
-3. **Run in development mode:**
+4. **Run in development mode:**
   ```bash
    npm run dev
   ```
-4. **Run in development mode:**
+  `To check if the project works`
+5. **Build the app:**
   ```bash
    npm run build
   ```
+
 ---
 
-🚀 Future Roadmap: What’s Next?
+## 🚀 Future Roadmap: What’s Next?
 If I had another week to develop this project, I would prioritize the following improvements to move it from a "Technical Assignment" to a "Production-Ready Application":
 
-1. Integration of TanStack Query (Priority: High)
-Why: Currently, I’m using custom hooks with useState. While functional, TanStack Query would provide robust caching, automatic background refetching, and better error handling. It would significantly reduce API calls when the user switches back and forth between the same cities.
-2. Advanced Map Optimization (Priority: High)
-Marker Clustering: In very dense areas like Warsaw or Krakow, hundreds of individual markers can clutter the map. I would implement Leaflet.markercluster to group points at lower zoom levels, improving both performance and readability.
-Server-Side Filtering: Instead of fetching all points for a city, I would implement a bounding-box query to only load lockers currently visible on the user's viewport.
-3. Expanded Testing Suite (Priority: Medium)
-E2E Testing: I would add Playwright tests to simulate the end-to-end user journey: from searching a city to clicking "Find Near Me" and verifying the route geometry.
-Component Testing: Add Vitest tests for the StatsPanel and FilterPanel to ensure UI state changes correctly reflect the filtered data.
-4. PWA Support (Priority: Low)
-Offline Mode: By adding a Service Worker, I could enable offline access to previously searched cities and basic map tiles, which is a great feature for users on the go with unstable connections.
+Priority,Feature,Description
+High,TanStack Query,Replace useState hooks with robust caching and background refetching to minimize redundant API calls.
+High,Map Optimization,Implement Leaflet.markercluster and Server-Side Bounding Box filtering to handle high-density areas (Warsaw/Kraków).
+Medium,E2E Testing,"Deploy Playwright to simulate full user journeys, specifically verifying route geometry and ""Find Near Me"" flows."
+Medium,Component Testing,Expand Vitest coverage for the StatsPanel and FilterPanel to ensure UI state integrity.
+Low,PWA Support,"Integrate Service Workers for Offline Mode, allowing users to access cached maps and locker data on the go."
 
 ---
 
-🤖 Use of AI Tools
-I utilized Antigravity (Claude, Gemini) to accelerate the development process and enhance the technical depth of the project. Here is how it was integrated:
+## 🤖 Use of Ai Tools
 
-Architecture & Boilerplate: AI helped in quickly setting up the modern stack (React 19, Vite 8, and Tailwind CSS 4), ensuring all configurations were aligned with current industry standards.
-Complex Algorithmic Logic: The hoursParser utility, which uses advanced Regular Expressions to handle inconsistent API data, was co-developed with AI. It helped in identifying edge cases in time formats (like 24h vs 24/7 or shorthand 11-20).
-API Orchestration: AI assisted in writing the asynchronous logic for fetching data from multiple sources (InPost, OSRM, and Nominatim), ensuring proper error handling and state management.
-UI/UX Refinement: I used AI to quickly iterate on the Tailwind CSS 4 styling, especially for complex components like the pulsing map markers and the glassmorphism effects in the sidebar.
+I leveraged AI tools (Claude, Gemini) as a force multiplier to accelerate boilerplate setup and complex logic refinement while maintaining strict architectural oversight.
+Implementation Areas
 
-How I verified and adapted the output:
-Code Review: Every line of code generated or suggested by the AI was manually reviewed for type-safety and logical correctness.
-Manual Testing: I performed extensive manual testing of the routing logic and time-filtering to ensure the "Time-Traveler" engine accurately reflected the API data.
-Performance Tuning: I adjusted the AI's initial suggestions to include useMemo and useCallback hooks where I identified potential rendering bottlenecks, ensuring a smooth 60fps experience.
-Build Validation: I consistently used npm run build and tsc to verify that the AI-assisted code was production-ready and free of TypeScript errors.
+    Architecture: Streamlined the configuration for the React 19 / Vite 8 / Tailwind 4 stack.
+
+    Algorithmic Logic: Co-developed the hoursParser utility. AI helped identify edge-case time formats (e.g., 24/7 vs PN-PT 11-20) to ensure 100% regex accuracy.
+
+    API Orchestration: Refined asynchronous flows for fetching and merging data from InPost, OSRM, and Nominatim.
+
+    UI/UX: Iterated on Tailwind 4 glassmorphism effects and custom pulsing CSS animations for map markers.
+
+The "Human in the Loop" Process
+
+    AI-generated code was never treated as "final." I applied a rigorous verification pipeline:
+
+    Manual Code Review: Every snippet was audited for type-safety and logical alignment with the project’s goals.
+
+    Performance Tuning: I manually refactored AI suggestions with useMemo and useCallback to eliminate rendering bottlenecks and maintain a 60fps experience.
+
+    Build Validation: Consistent use of tsc and npm run build ensured the codebase remained production-grade and error-free.
 
 ---
 

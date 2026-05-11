@@ -41,7 +41,7 @@ To handle large numbers of markers, I implemented **Memoization (`useMemo`)** an
 The InPost API returns opening hours in various formats (e.g., "24/7", "PN-PT 11-20"). I developed a custom parser using **Regular Expressions (Regex)** to standardize this data for the Time-Traveler engine.
 
 ### **3. Real-Time Foot Distance**
-Instead of simple "as the crow flies" calculations, the app communicates with an external routing engine to provide users with the actual walking distance they need to cover, significantly enhancing the utility of the "Find Near Me" feature.
+Instead of simple "as the crow flies" calculations, the app communicates with an external routing engine to provide users with the actual walking distance they need to cover, significantly enhancing the utility of the "Find nearest from my location" feature.
 
 ---
 
@@ -50,16 +50,18 @@ Instead of simple "as the crow flies" calculations, the app communicates with an
 1. **Clone the repository:**
    ```bash
    git clone [URL]
+   ```
 2. **Install dependencies:**
    ```bash
    npm install
+   ```
 3. **Run in development mode:**
   ```bash
-   npm run dev
+  npm run dev
   ```
 4. **Run in development mode:**
   ```bash
-   npm run build
+  npm run build
   ```
 
 ## 📝 Author

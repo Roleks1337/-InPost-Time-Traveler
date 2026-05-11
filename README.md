@@ -63,14 +63,13 @@ Git: For cloning and version control management.
    npm install
    ```
 4. **Run in development mode:**
-  ```bash
+   ```bash
    npm run dev
-  ```
-  `To check if the project works`
+   ```
 5. **Build the app:**
-  ```bash
+   ```bash
    npm run build
-  ```
+   ```
 
 ---
 

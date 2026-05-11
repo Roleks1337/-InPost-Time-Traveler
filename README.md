@@ -2,7 +2,7 @@
 
 ### **Software Development Internship — Technical Assignment 2026**
 
-**Live Demo:** [INSERT YOUR LINK HERE]
+**Live Demo:** WIP
 
 ---
 
@@ -15,7 +15,7 @@ By analyzing data from the **InPost Global Points API** in real-time, the applic
 ### **Core Features:**
 * **🕰️ Time-Traveler (Dynamic Time Slider):** A custom filtering engine that updates the map in real-time. It allows users to check locker availability at any chosen hour (e.g., verifying if a locker inside a shopping mall is open at 11:00 PM).
 * **♿ Accessibility First:** Dedicated filters for the `easy_access_zone`, highlighting points designed for seniors and people with disabilities.
-* **📍 Smart Routing & Geolocation:** The "Find Near Me" feature doesn't just find the closest point—it integrates with the **OSRM API** to calculate precise walking routes, real-world distances, and estimated walking times.
+* **📍 Smart Routing & Geolocation:** The "Find nearest from my location" feature doesn't just find the closest point—it integrates with the **OSRM API** to calculate precise walking routes, real-world distances, and estimated walking times.
 * **📊 Live Insights Dashboard:** A real-time statistics panel showing the health of the loaded network (operational status, "InPost Next" generation lockers, and availability percentages for the selected time).
 * **🔍 Advanced Marker Logic:** A visual system that distinguishes between open points, closed points (yellow markers), and points that are currently out of service (red markers).
 
@@ -56,9 +56,11 @@ Instead of simple "as the crow flies" calculations, the app communicates with an
 3. **Run in development mode:**
   ```bash
    npm run dev
+  ```
 4. **Run in development mode:**
   ```bash
    npm run build
+  ```
 
 ## 📝 Author
 

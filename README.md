@@ -2,7 +2,7 @@
 
 ### **Software Development Internship — Technical Assignment 2026**
 
-**Live Demo:** WIP
+**Live Demo:** https://time-traveler.up.railway.app/
 
 ---
 
@@ -24,7 +24,7 @@ By analyzing data from the **InPost Global Points API** in real-time, the applic
 * **📊 Live Insights Dashboard:** A real-time statistics panel showing the health of the loaded network (operational status, "InPost Next" generation lockers, and availability percentages for the selected time).
 * **🔍 Advanced Marker Logic:** A visual system that distinguishes between open points, closed points (yellow markers), and points that are currently out of service (red markers).
 
-**Live Demo:** WIP
+**Live Demo:** https://time-traveler.up.railway.app/
 
 ---
 
